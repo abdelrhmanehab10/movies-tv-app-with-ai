@@ -6,4 +6,7 @@ Used Library :
 
 - Next.js
 - Tailwind CSS
-- Lucide
+- Lucide React
+- Keen Slider
+- Shadcn/ui
+- zustand
