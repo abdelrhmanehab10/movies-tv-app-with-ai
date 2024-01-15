@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "system",
-          content: `Generate a personalized movie or series recommendation, I'm ${mood}, I prefer to be ${story} story, and in ${setting}. Please return 3 result with only the name of each result`,
+          content: `Generate a movie or series recommendation, I'm ${mood}, I prefer to be ${story} story, and in ${setting}. Please return 4 result with only the name of each result because I will store this name in array.`,
         },
       ],
       model: "gpt-3.5-turbo",

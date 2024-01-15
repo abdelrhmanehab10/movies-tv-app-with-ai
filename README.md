@@ -1,6 +1,6 @@
 #Cinemotion
 
-This will be a movie app, that will use ai to suggest movie or series based on your mode.
+A movie app, Has a tool that use ai to suggest movie or series based on your mode.
 
 Used Library :
 
