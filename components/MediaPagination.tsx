@@ -31,6 +31,7 @@ const MediaPagination: React.FC<MediaPaginationProps> = ({
       <PaginationContent className="my-2">
         <PaginationItem>
           <PaginationPrevious
+            className="hover:bg-primary hover:text-white"
             href={type ? generateURL(currentPage - 1) : ""}
             onClick={() =>
               onClick(currentPage > 0 ? currentPage - 1 : currentPage)
@@ -43,6 +44,7 @@ const MediaPagination: React.FC<MediaPaginationProps> = ({
             return (
               <PaginationItem key={idx}>
                 <PaginationLink
+                  className="hover:bg-primary hover:text-white border-primary"
                   isActive={currentPage === page}
                   href={type ? generateURL(page) : ""}
                   onClick={() => onClick(page)}
@@ -58,6 +60,7 @@ const MediaPagination: React.FC<MediaPaginationProps> = ({
         </PaginationItem>
         <PaginationItem>
           <PaginationLink
+            className="hover:bg-primary hover:text-white border-primary"
             isActive={currentPage === totalPages}
             href={generateURL(totalPages)}
             onClick={() => onClick(totalPages)}
@@ -67,6 +70,7 @@ const MediaPagination: React.FC<MediaPaginationProps> = ({
         </PaginationItem>
         <PaginationItem>
           <PaginationNext
+            className="hover:bg-primary hover:text-white"
             href={type ? generateURL(currentPage + 1) : ""}
             onClick={() =>
               onClick(
