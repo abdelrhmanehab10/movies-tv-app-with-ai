@@ -1,18 +1,17 @@
-Cinemotion - Movie and Series Recommendation App
-Overview
-Cinemotion is an innovative movie and series recommendation app that employs AI to suggest personalized content based on your mood. This app is built using Next.js for the frontend, Tailwind CSS for styling, Lucide React for icons, Keen Slider for smooth and responsive sliders, Shadcn/ui for building components, and Zustand for state management.
+# Cinemotion - Movie and Series Recommendation App
 
-Features
-AI-Powered Recommendations:
+## Overview
+Cinemotion is an innovative movie and series recommendation app that employs AI to suggest personalized content based on your mood. This app is built using Next.js for the frontend, Tailwind CSS for styling, Lucide React for icons, Shadcn/ui for building components, and Zustand for state management.
 
-Cinemotion utilizes advanced AI algorithms to analyze your viewing history, preferences, and mood to suggest movies and series tailored just for you.
-User-Friendly Interface:
+## Features
+**AI-Powered Recommendations**:
+
+Cinemotion utilizes advanced AI algorithms to analyze preferences, and mood to suggest movies and series tailored just for you.
+
+**User-Friendly Interface**:
 
 The app boasts a clean and intuitive interface designed with Next.js, ensuring a smooth and responsive user experience.
 Interactive Sliders:
-
-Experience interactive and engaging sliders powered by Keen Slider, allowing for seamless navigation and exploration of content.
-Modern Iconography:
 
 Lucide React provides a modern and aesthetically pleasing set of icons, enhancing the visual appeal of the app.
 Custom UI Components:
@@ -25,17 +24,20 @@ Getting Started
 To run Cinemotion locally, follow these steps:
 
 Clone the repository:
-
+```git
 git clone https://github.com/abdelrhman10/cinemotion.git
+```
 
 Install dependencies:
-
+```git
 cd cinemotion
 npm install
-
+```
 Run the development server:
 
+```git
 npm run dev
+```
 
 Open your browser and navigate to
 
