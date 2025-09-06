@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import ModalProvider from "@/components/providers/ModalProvider";
 
 import { Toaster } from "sonner";
+import Provider from "@/components/provider";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -28,9 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn("bg-foreground text-white", font.className)}>
-        <ModalProvider />
-        {children}
-        <Toaster />
+        <Provider>{children}</Provider>
       </body>
     </html>
   );
