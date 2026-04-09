@@ -48,5 +48,10 @@
     "fs": false,
     "path": false,
     "os": false
+  },
+  "pnpm": {
+    "overrides": {
+      "picomatch": "^4.0.1"
+    }
   }
 }
