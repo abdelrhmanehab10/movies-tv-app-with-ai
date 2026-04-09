@@ -51,7 +51,8 @@
   },
   "pnpm": {
     "overrides": {
-      "picomatch": "^4.0.1"
+      "picomatch": "^4.0.1",
+      "minimatch": "^10.0.0"
     }
   }
 }
