@@ -52,7 +52,8 @@
   "pnpm": {
     "overrides": {
       "picomatch": "^4.0.1",
-      "minimatch": "^10.0.0"
+      "minimatch": "^10.0.0",
+      "yaml": "^2.8.3"
     }
   }
 }
