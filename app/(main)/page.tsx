@@ -1,5 +1,5 @@
 import MediaTabs from "./_components/MediaTabs";
-import RecommendedForYou from "./_components/RecommendModal/RecommendedForYou";
+import RecommendedForYou from "./_components/recommend-modal/RecommendedForYou";
 
 export default function Home() {
   return (

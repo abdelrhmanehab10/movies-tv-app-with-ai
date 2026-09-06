@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { FilmType } from "@/types";
+import { getTmdbImageUrl } from "@/lib/tmdb-images";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -16,9 +17,7 @@ interface ResultCardProps {
 const ResultCard: FC<ResultCardProps> = ({ item, onCloseModal }) => {
   const router = useRouter();
 
-  const imagePath: string =
-    process.env.NEXT_PUBLIC_IMAGE_URL +
-    (item?.poster_path || item?.backdrop_path || "/logo.png");
+  const imagePath = getTmdbImageUrl(item?.poster_path || item?.backdrop_path);
   const voteAverage: string = item?.vote_average.toFixed(1);
   const mediaType: string = item?.media_type;
   const title: string = item?.original_title || item?.name;
@@ -37,9 +36,7 @@ const ResultCard: FC<ResultCardProps> = ({ item, onCloseModal }) => {
       <figure>
         <Skeleton className="rounded-lg w-full h-full bg-primary" />
         <Image
-          src={
-            item?.poster_path || item?.backdrop_path ? imagePath : "/logo.png"
-          }
+          src={imagePath}
           width={400}
           height={400}
           alt={title + " poster"}

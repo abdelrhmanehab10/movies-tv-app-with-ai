@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import axios from "axios";
 
 import { FilmType } from "@/types";
+import { getTmdbAuthConfig } from "@/lib/tmdb-auth";
 import LoadingScreen from "@/components/LoadingScreen";
 import DetailHeader from "./components/DetailHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,12 +26,10 @@ const MediaDetail: FC<MediaDetailProps> = ({}) => {
   const getMediaDetail = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(URL, {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
-        },
-      });
+      const response = await axios.get(
+        URL,
+        getTmdbAuthConfig(process.env.NEXT_PUBLIC_API_KEY)
+      );
       setIsLoading(false);
 
       setMediaDetail(response.data);

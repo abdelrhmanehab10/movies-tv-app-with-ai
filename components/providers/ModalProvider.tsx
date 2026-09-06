@@ -1,6 +1,6 @@
 "use client";
 import { FC, useEffect, useState } from "react";
-import RecommendationModal from "@/app/(main)/_components/RecommendModal/modal";
+import RecommendationModal from "@/app/(main)/_components/recommend-modal/modal";
 
 interface ModalProviderProps {}
 

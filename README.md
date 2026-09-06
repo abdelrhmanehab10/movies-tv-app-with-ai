@@ -1,51 +1,110 @@
-# Cinemotion - Movie and Series Recommendation App
+# Cinemotion — AI Movie & Series Discovery
 
-## Overview
-Cinemotion is an innovative movie and series recommendation app that employs AI to suggest personalized content based on your mood. This app is built using Next.js for the frontend, Tailwind CSS for styling, Lucide React for icons, Shadcn/ui for building components, and Zustand for state management.
+Cinemotion is a Next.js application for discovering movies and TV series through search, browsing, pagination, detail pages, and an AI-assisted recommendation flow.
 
-## Features
-**AI-Powered Recommendations**:
+**Live demo:** [movies-tv-app-with-ai.vercel.app](https://movies-tv-app-with-ai.vercel.app)
 
-Cinemotion utilizes advanced AI algorithms to analyze preferences, and mood to suggest movies and series tailored just for you.
+## What it demonstrates
 
-**User-Friendly Interface**:
+- **AI-assisted discovery:** users choose a mood, story type, and setting; the app sends those preferences to a Groq-powered route and resolves the recommendation through TMDB.
+- **Movie and TV search:** search by media type with URL-based query state and paginated results.
+- **Media details:** open a dedicated detail view with title, genres, overview, release information, and artwork.
+- **Reusable UI:** responsive Tailwind CSS layouts with Radix/shadcn-style components, loading states, dialogs, tabs, forms, and pagination.
+- **Typed form handling:** React Hook Form and Zod validation for search and recommendation inputs.
+- **Client state:** Zustand stores for UI and result state, with debounced search interactions.
 
-The app boasts a clean and intuitive interface designed with Next.js, ensuring a smooth and responsive user experience.
-Interactive Sliders:
+## User flow
 
-Lucide React provides a modern and aesthetically pleasing set of icons, enhancing the visual appeal of the app.
-Custom UI Components:
+1. Browse movie or TV content from the main page.
+2. Search for a title and move through paginated results.
+3. Open a result to view its details.
+4. Open the recommendation flow and choose a mood, story type, and setting.
+5. Receive an AI-generated title and resolve it to a TMDB media result.
 
-Shadcn/ui is leveraged to build custom UI components, ensuring consistency and a polished look throughout the app.
-State Management with Zustand:
+## Architecture
 
-Zustand is employed for efficient state management, maintaining a robust and performant application state.
-Getting Started
-To run Cinemotion locally, follow these steps:
+- **Next.js App Router:** route groups separate the main browsing experience from detail pages.
+- **Recommendation API:** `app/api/recommend/route.ts` calls Groq through the OpenAI-compatible SDK and then searches TMDB for the returned title.
+- **TMDB integration:** movie, TV, multi-search, and detail requests are handled through Axios.
+- **Validation:** Zod schemas are connected to React Hook Form through `@hookform/resolvers`.
+- **UI state:** Zustand manages client-side modal and result state.
 
-Clone the repository:
-```git
-git clone https://github.com/abdelrhman10/cinemotion.git
-```
+## Tech stack
 
-Install dependencies:
-```git
-cd cinemotion
+- Next.js 15
+- React 18
+- TypeScript
+- Tailwind CSS
+- Radix UI / shadcn-style components
+- Zustand
+- React Hook Form + Zod
+- Axios
+- Groq API
+- TMDB API
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 18+
+- npm, pnpm, or another Node.js package manager
+- A Groq API key
+- A TMDB API key or read access token
+
+### Installation
+
+```bash
+git clone https://github.com/abdelrhmanehab10/movies-tv-app-with-ai.git
+cd movies-tv-app-with-ai
 npm install
 ```
-Run the development server:
 
-```git
+Create a `.env.local` file in the project root:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+NEXT_PUBLIC_API_KEY=your_tmdb_api_key_or_read_access_token
+NEXT_PUBLIC_IMAGE_URL=https://image.tmdb.org/t/p/w500
+```
+
+`NEXT_PUBLIC_IMAGE_URL` is optional; the app defaults to the URL above when it is not set.
+Do not commit `.env.local` or expose secret values in source control.
+
+### Run locally
+
+```bash
 npm run dev
 ```
 
-Open your browser and navigate to
+Open [http://localhost:3000](http://localhost:3000).
 
-http://localhost:3000
+### Production build
 
-to explore Cinemotion.
+```bash
+npm run build
+npm run start
+```
 
-License
+## Project structure
+
+```text
+app/
+├── (main)/                 # Browse, search, recommendation UI
+├── api/recommend/          # Groq + TMDB recommendation route
+└── detail/                 # Media detail page
+components/                 # Reusable UI and result components
+hooks/                      # Zustand stores and shared hooks
+schemas/                    # Zod validation schemas
+types/                      # Shared TypeScript types
+```
+
+## Engineering highlights
+
+- Keeps recommendation credentials on the server-side Groq route.
+- Uses URL query parameters to make search state shareable and navigable.
+- Separates API calls, validation schemas, shared components, and page-level UI.
+- Includes dependency and security-maintenance updates in the project history.
+
+## License
+
 This project is licensed under the MIT License.
-
-Enjoy exploring movies and series with Cinemotion! 🎬✨

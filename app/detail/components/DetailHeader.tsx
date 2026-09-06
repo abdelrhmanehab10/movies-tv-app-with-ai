@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { Calendar, Clock, Ticket } from "lucide-react";
 import { FilmType } from "@/types";
+import { getTmdbImageUrl } from "@/lib/tmdb-images";
 interface DetailHeaderProps {
   mediaDetail: FilmType;
 }
@@ -12,10 +13,7 @@ const DetailHeader: FC<DetailHeaderProps> = ({ mediaDetail }) => {
     <div className="md:px-16">
       <div className="relative w-full h-96 md:h-[30vh]">
         <Image
-          src={
-            ((process.env.NEXT_PUBLIC_IMAGE_URL as string) +
-              mediaDetail?.backdrop_path) as string
-          }
+          src={getTmdbImageUrl(mediaDetail?.backdrop_path)}
           fill
           className="w-full rounded-b-xl object-cover"
           alt="backdrop"
@@ -28,10 +26,7 @@ const DetailHeader: FC<DetailHeaderProps> = ({ mediaDetail }) => {
         </div>
         <div className="w-32 h-44 absolute -bottom-1/4 left-10 md:left-28">
           <Image
-            src={
-              ((process.env.NEXT_PUBLIC_IMAGE_URL as string) +
-                mediaDetail?.poster_path) as string
-            }
+            src={getTmdbImageUrl(mediaDetail?.poster_path)}
             fill
             className="w-32 rounded-3xl"
             alt="backdrop"

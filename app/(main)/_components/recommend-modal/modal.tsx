@@ -29,11 +29,13 @@ import {
   SelectTrigger,
   SelectContent,
   SelectItem,
-} from "@radix-ui/react-select";
+  SelectValue,
+} from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { useResults } from "@/hooks/useResults";
 
 const storyEnum = ["action", "comedy", "romance"] as const;
 const settingEnum = ["past", "present", "future"] as const;
@@ -47,18 +49,28 @@ const recommendSchema = z.object({
 
 const RecommendationModal = () => {
   const { isOpen, onClose } = useModal();
+  const { onResults } = useResults();
 
   const {
     mutate,
     isPending: isLoading,
     data,
+    reset: resetMutation,
   } = useMutation({
     mutationFn: async (values: z.infer<typeof recommendSchema>) => {
-      const { data } = await axios.post("/api/recommend", values);
+      const { data } = await axios.post<FilmType>("/api/recommend", values);
       return data;
     },
+    onSuccess: (result) => {
+      onResults([result]);
+    },
     onError: (error) => {
-      toast.error(error.message || "Something went wrong");
+      const axiosError = error as AxiosError<{ error?: string }>;
+      toast.error(
+        axiosError.response?.data?.error ||
+          axiosError.message ||
+          "Something went wrong"
+      );
     },
   });
 
@@ -69,6 +81,7 @@ const RecommendationModal = () => {
   const closeHandler = () => {
     onClose();
     form.reset();
+    resetMutation();
   };
 
   return (
@@ -81,14 +94,8 @@ const RecommendationModal = () => {
             for you.
           </DialogDescription>
           {data ? (
-            <main className="grid grid-cols-2 grid-rows-2 gap-3 py-2">
-              {data.map((resultItem, idx) => (
-                <ResultCard
-                  key={idx}
-                  item={resultItem}
-                  onCloseModal={closeHandler}
-                />
-              ))}
+            <main className="py-2">
+              <ResultCard item={data} onCloseModal={closeHandler} />
             </main>
           ) : (
             <Form {...form}>
@@ -111,7 +118,7 @@ const RecommendationModal = () => {
                         >
                           <FormControl className="my-2">
                             <SelectTrigger>
-                              {field.value || qa.description}
+                              <SelectValue placeholder={qa.description} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>

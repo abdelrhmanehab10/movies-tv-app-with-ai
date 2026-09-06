@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { getTmdbAuthConfig } from "@/lib/tmdb-auth";
 import { FilmType } from "@/types";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
@@ -21,12 +22,10 @@ const DisplayResults: FC<DisplayResultsProps> = ({ link, query, type }) => {
 
   const getMedia = async () => {
     setIsLoading(true);
-    const { data } = await axios.get(link + `?page=${searchPage}`, {
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
-      },
-    });
+    const { data } = await axios.get(
+      link + `?page=${searchPage}`,
+      getTmdbAuthConfig(process.env.NEXT_PUBLIC_API_KEY)
+    );
     setTotalPages(data.total_pages);
     setIsLoading(false);
     setResults(data.results);
