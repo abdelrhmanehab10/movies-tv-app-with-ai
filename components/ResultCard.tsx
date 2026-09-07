@@ -33,14 +33,14 @@ const ResultCard: FC<ResultCardProps> = ({ item, onCloseModal }) => {
       onClick={handleCardClick}
       className="w-full h-full flex justify-center items-center relative overflow-hidden cursor-pointer"
     >
-      <figure>
-        <Skeleton className="rounded-lg w-full h-full bg-primary" />
+      <figure className="relative aspect-[2/3] w-full overflow-hidden rounded-lg">
+        <Skeleton className="absolute inset-0 rounded-lg bg-primary" />
         <Image
           src={imagePath}
-          width={400}
-          height={400}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1280px) 25vw, 16vw"
           alt={title + " poster"}
-          className="rounded-lg object-fill transition-opacity opacity-0 duration-500 h-full"
+          className="rounded-lg object-cover transition-opacity opacity-0 duration-500"
           onLoad={(image) => {
             image.currentTarget.classList.remove("opacity-0");
           }}
@@ -58,18 +58,20 @@ const ResultCard: FC<ResultCardProps> = ({ item, onCloseModal }) => {
         hover:opacity-100
         "
         >
-          <header className="bg-primary flex justify-between items-center w-full px-2 py-1 rounded-t-lg">
+          <header className="bg-primary flex justify-between items-center w-full px-2 py-2 rounded-t-lg">
             <h2 className="text-sm capitalize">{mediaType}</h2>
             <div className="flex items-center gap-1">
               {isForAdult && (
-                <span className="text-[8px]">For: {isForAdult}</span>
+                <span className="text-xs">For: {isForAdult}</span>
               )}
-              <span className="text-[8px]">IMDB: {voteAverage}</span>
+              <span className="text-xs">IMDB: {voteAverage}</span>
             </div>
           </header>
-          <section className="pt-10">
-            <h1 className="mt-2 font-bold text-center">{title}</h1>
-            <p className="text-center text-[10px] mt-1 px-4 overflow-hidden text-ellipsis">
+          <section className="px-2 pt-8">
+            <h1 className="mt-2 text-base md:text-lg font-semibold leading-tight text-center">
+              {title}
+            </h1>
+            <p className="text-xs md:text-sm leading-5 text-center mt-2 px-2 overflow-hidden">
               {item?.overview.slice(0, 300)}...
             </p>
           </section>

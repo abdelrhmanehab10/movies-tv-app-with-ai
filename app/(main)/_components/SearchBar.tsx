@@ -56,13 +56,13 @@ const SearchBar = ({}) => {
             control={form.control}
             name={"type"}
             render={({ field }) => (
-              <FormItem className="w-1/3">
+              <FormItem className="w-auto shrink-0">
                 <Select
                   defaultValue={field.value}
                   onValueChange={field.onChange}
                   // disabled={isLoading}
                 >
-                  <FormControl className="border-r-transparent py-6 rounded-full rounded-r-none ml-1 pl-6">
+                  <FormControl className="w-28 border-r-transparent py-6 rounded-full rounded-r-none ml-1 px-4">
                     <SelectTrigger>
                       <SelectValue placeholder="Select the type" />
                     </SelectTrigger>

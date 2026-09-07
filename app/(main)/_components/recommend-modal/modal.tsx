@@ -86,7 +86,7 @@ const RecommendationModal = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={closeHandler}>
-      <DialogContent className="bg-foreground border-foreground">
+      <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto border-foreground bg-foreground">
         <DialogHeader className="text-left">
           <DialogTitle>Cinemotion Tool</DialogTitle>
           <DialogDescription>
@@ -94,8 +94,10 @@ const RecommendationModal = () => {
             for you.
           </DialogDescription>
           {data ? (
-            <main className="py-2">
-              <ResultCard item={data} onCloseModal={closeHandler} />
+            <main className="flex justify-center py-2">
+              <div className="w-full max-w-[220px] sm:max-w-[240px]">
+                <ResultCard item={data} onCloseModal={closeHandler} />
+              </div>
             </main>
           ) : (
             <Form {...form}>
