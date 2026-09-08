@@ -9,7 +9,7 @@ export const QuestionsAndAnswers = [
     type: "story",
     question: "What kind of story are you in the mood for today?",
     answers: ["action", "comedy", "romance"],
-    description: "Select a genre: Action, Comedy, or Drama.",
+    description: "Select a genre: Action, Comedy, or Romance.",
   },
   {
     type: "setting",
