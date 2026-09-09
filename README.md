@@ -70,6 +70,18 @@ NEXT_PUBLIC_IMAGE_URL=https://image.tmdb.org/t/p/w500
 `NEXT_PUBLIC_IMAGE_URL` is optional; the app defaults to the URL above when it is not set.
 Do not commit `.env.local` or expose secret values in source control.
 
+### Database setup
+
+The repository includes Supabase CLI configuration and a versioned migration. After authenticating and linking the hosted project, apply future migrations with:
+
+```bash
+pnpm supabase login
+pnpm supabase link --project-ref your-project-ref
+pnpm supabase db push
+```
+
+The migrations create the account tables and an atomic three-pick recommendation quota. Browsing stays public, but AI recommendations require a signed-in user. Keep `SUPABASE_SERVICE_ROLE_KEY` server-only; the recommendation route uses it to claim or refund quota and it must never use a `NEXT_PUBLIC_` prefix.
+
 ### Run locally
 
 ```bash

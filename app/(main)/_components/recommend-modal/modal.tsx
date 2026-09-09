@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Dialog,
   DialogContent,
@@ -41,7 +42,7 @@ import {
 } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useResults } from "@/hooks/useResults";
 
 const storyEnum = ["action", "comedy", "romance"] as const;
@@ -56,6 +57,15 @@ const recommendSchema = z.object({
 
 type RecommendationValues = z.infer<typeof recommendSchema>;
 type RecommendationMode = "quick" | "advanced";
+type RecommendationResponse = { result: FilmType; remaining: number };
+type QuotaResponse = { authenticated: true; limit: number; remaining: number };
+type ApiErrorResponse = {
+  code?: string;
+  error?: string;
+  remaining?: number;
+};
+
+const quotaQueryKey = ["recommendation-quota"] as const;
 
 const optionIcons: Record<TypeEnum, Record<string, LucideIcon>> = {
   mood: {
@@ -114,27 +124,63 @@ const RecommendationModal = () => {
   const { isOpen, onClose } = useModal();
   const { onResults } = useResults();
   const [mode, setMode] = useState<RecommendationMode>("quick");
+  const queryClient = useQueryClient();
+
+  const {
+    data: quota,
+    error: quotaError,
+    isPending: isQuotaLoading,
+  } = useQuery({
+    queryKey: quotaQueryKey,
+    queryFn: async () => {
+      const { data } = await axios.get<QuotaResponse>("/api/recommend");
+      return data;
+    },
+    enabled: isOpen,
+    retry: false,
+  });
 
   const {
     mutate,
     isPending: isLoading,
-    data,
+    data: recommendation,
+    error: mutationError,
     reset: resetMutation,
   } = useMutation({
     mutationFn: async (values: RecommendationValues) => {
-      const { data } = await axios.post<FilmType>("/api/recommend", values);
+      const { data } = await axios.post<RecommendationResponse>(
+        "/api/recommend",
+        values
+      );
       return data;
     },
-    onSuccess: (result) => {
-      onResults([result]);
+    onSuccess: (response) => {
+      onResults([response.result]);
+      queryClient.setQueryData<QuotaResponse>(quotaQueryKey, {
+        authenticated: true,
+        limit: quota?.limit ?? 3,
+        remaining: response.remaining,
+      });
     },
     onError: (error) => {
-      const axiosError = error as AxiosError<{ error?: string }>;
+      const axiosError = error as AxiosError<ApiErrorResponse>;
+
+      if (axiosError.response?.data?.remaining !== undefined) {
+        queryClient.setQueryData<QuotaResponse>(quotaQueryKey, {
+          authenticated: true,
+          limit: quota?.limit ?? 3,
+          remaining: axiosError.response.data.remaining,
+        });
+      }
+
       toast.error(
         axiosError.response?.data?.error ||
           axiosError.message ||
           "Something went wrong"
       );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: quotaQueryKey });
     },
   });
 
@@ -164,8 +210,15 @@ const RecommendationModal = () => {
     mutate(values);
   };
 
-  const selectedValues = form.watch();
-  const selectedCount = Object.values(selectedValues).filter(Boolean).length;
+  const apiError = (mutationError ?? quotaError) as
+    | AxiosError<ApiErrorResponse>
+    | null;
+  const errorCode = apiError?.response?.data?.code;
+  const authRequired = errorCode === "AUTH_REQUIRED";
+  const remainingPicks = recommendation?.remaining ?? quota?.remaining;
+  const limitReached =
+    errorCode === "FREE_LIMIT_REACHED" || remainingPicks === 0;
+  const submitDisabled = isLoading || authRequired || limitReached;
 
   return (
     <Dialog open={isOpen} onOpenChange={closeHandler}>
@@ -183,7 +236,28 @@ const RecommendationModal = () => {
               </DialogDescription>
             </div>
           </div>
-          {!data && (
+          <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/60">
+            {isQuotaLoading ? (
+              "Checking your free picks..."
+            ) : authRequired ? (
+              <span>
+                <Link
+                  className="font-medium text-primary hover:underline"
+                  href="/login"
+                >
+                  Sign in
+                </Link>{" "}
+                to use your 3 free AI picks.
+              </span>
+            ) : limitReached ? (
+              "You have used all 3 free AI picks."
+            ) : remainingPicks !== undefined ? (
+              `${remainingPicks} of ${quota?.limit ?? 3} free AI picks left`
+            ) : (
+              "Signed-in viewers get 3 free AI picks."
+            )}
+          </div>
+          {!recommendation && (
             <>
               <div
                 role="tablist"
@@ -242,7 +316,7 @@ const RecommendationModal = () => {
                         <button
                           key={preset.label}
                           type="button"
-                          disabled={isLoading}
+                          disabled={submitDisabled}
                           onClick={() => chooseVibe(preset.values)}
                           className="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3 text-left transition-colors hover:border-white/25 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-60"
                         >
@@ -264,7 +338,7 @@ const RecommendationModal = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    disabled={isLoading}
+                    disabled={submitDisabled}
                     onClick={surpriseMe}
                     className="h-auto min-w-0 w-full justify-between rounded-xl border-primary/30 bg-primary/[0.04] px-3 py-3 text-left text-white/90 hover:border-primary/60 hover:bg-primary/10 hover:text-white"
                   >
@@ -285,10 +359,13 @@ const RecommendationModal = () => {
               )}
             </>
           )}
-          {data ? (
+          {recommendation ? (
             <main className="flex justify-center py-2">
               <div className="w-full max-w-[220px] sm:max-w-[240px]">
-                <ResultCard item={data} onCloseModal={closeHandler} />
+                <ResultCard
+                  item={recommendation.result}
+                  onCloseModal={closeHandler}
+                />
               </div>
             </main>
           ) : mode === "advanced" ? (
@@ -326,7 +403,7 @@ const RecommendationModal = () => {
                                   key={answer}
                                   type="button"
                                   aria-pressed={isSelected}
-                                  disabled={isLoading}
+                                  disabled={submitDisabled}
                                   onClick={() => field.onChange(answer)}
                                   className={`flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2 text-center capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-60 ${
                                     isSelected
@@ -354,7 +431,7 @@ const RecommendationModal = () => {
                   />
                 ))}
                 <Button
-                  disabled={isLoading}
+                  disabled={submitDisabled}
                   type="submit"
                   className="mt-1 h-11 w-full rounded-xl"
                 >
