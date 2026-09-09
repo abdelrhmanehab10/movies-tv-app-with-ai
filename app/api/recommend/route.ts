@@ -231,9 +231,7 @@ export async function POST(req: Request) {
   try {
     const response = await runWithQuota({
       claim: async () => {
-        const { data, error } = await admin.rpc("claim_free_recommendation", {
-          p_user_id: user.id,
-        });
+        const { data, error } = await supabase.rpc("claim_free_recommendation");
         const claim = data?.[0];
 
         if (error || !claim) {

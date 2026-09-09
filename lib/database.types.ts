@@ -133,7 +133,7 @@ export type Database = {
     };
     Functions: {
       claim_free_recommendation: {
-        Args: { p_user_id: string };
+        Args: Record<PropertyKey, never>;
         Returns: Array<{ allowed: boolean; remaining: number }>;
       };
       release_free_recommendation: {
