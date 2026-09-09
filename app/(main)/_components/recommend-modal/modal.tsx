@@ -122,7 +122,7 @@ const getRandomValue = <T,>(values: readonly T[]) =>
 
 const RecommendationModal = () => {
   const { isOpen, onClose } = useModal();
-  const { onResults } = useResults();
+  const { onResults, resetResults } = useResults();
   const [mode, setMode] = useState<RecommendationMode>("quick");
   const queryClient = useQueryClient();
 
@@ -196,6 +196,12 @@ const RecommendationModal = () => {
   };
 
   const chooseVibe = (values: RecommendationValues) => {
+    requestRecommendation(values);
+  };
+
+  const requestRecommendation = (values: RecommendationValues) => {
+    resetResults();
+    resetMutation();
     mutate(values);
   };
 
@@ -207,7 +213,7 @@ const RecommendationModal = () => {
     };
 
     form.reset(values);
-    mutate(values);
+    requestRecommendation(values);
   };
 
   const apiError = (mutationError ?? quotaError) as
@@ -371,7 +377,7 @@ const RecommendationModal = () => {
           ) : mode === "advanced" ? (
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit((values) => mutate(values))}
+                onSubmit={form.handleSubmit(requestRecommendation)}
                 className="mt-5 space-y-4"
               >
                 <div className="flex items-center justify-between border-t border-white/10 pt-4">

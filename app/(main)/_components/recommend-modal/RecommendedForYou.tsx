@@ -2,9 +2,14 @@
 
 import ResultCard from "@/components/ResultCard";
 import { useResults } from "@/hooks/useResults";
+import { useEffect } from "react";
 
 const RecommendedForYou = () => {
-  const { results } = useResults();
+  const { results, hydrateResults } = useResults();
+
+  useEffect(() => {
+    hydrateResults();
+  }, [hydrateResults]);
 
   if (results.length === 0) return;
 
