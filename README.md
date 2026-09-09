@@ -25,7 +25,7 @@ Cinemotion is a Next.js application for discovering movies and TV series through
 
 - **Next.js App Router:** route groups separate the main browsing experience from detail pages.
 - **Recommendation API:** `app/api/recommend/route.ts` calls Groq through the OpenAI-compatible SDK and then searches TMDB for the returned title.
-- **TMDB integration:** movie, TV, multi-search, and detail requests are handled through Axios.
+- **TMDB integration:** server routes handle movie lists, search, details, and AI recommendation lookups without exposing the credential to the browser.
 - **Validation:** Zod schemas are connected to React Hook Form through `@hookform/resolvers`.
 - **UI state:** Zustand manages client-side modal and result state.
 
@@ -63,12 +63,13 @@ Create a `.env.local` file in the project root:
 
 ```env
 GROQ_API_KEY=your_groq_api_key
-NEXT_PUBLIC_API_KEY=your_tmdb_api_key_or_read_access_token
+TMDB_API_KEY=your_tmdb_api_key_or_read_access_token
 NEXT_PUBLIC_IMAGE_URL=https://image.tmdb.org/t/p/w500
 ```
 
 `NEXT_PUBLIC_IMAGE_URL` is optional; the app defaults to the URL above when it is not set.
-Do not commit `.env.local` or expose secret values in source control.
+`TMDB_API_KEY` is server-only; never give it a `NEXT_PUBLIC_` prefix. Do not
+commit `.env.local` or expose secret values in source control.
 
 ### Database setup
 
@@ -112,7 +113,7 @@ types/                      # Shared TypeScript types
 
 ## Engineering highlights
 
-- Keeps recommendation credentials on the server-side Groq route.
+- Keeps Groq, TMDB, and Supabase service credentials on the server.
 - Uses URL query parameters to make search state shareable and navigable.
 - Separates API calls, validation schemas, shared components, and page-level UI.
 - Includes dependency and security-maintenance updates in the project history.

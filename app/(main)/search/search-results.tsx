@@ -7,10 +7,11 @@ const SearchResults = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") as string;
   const type = searchParams.get("t") as string;
+  const apiParams = new URLSearchParams({ query, type });
 
   return (
     <DisplayResults
-      link={`https://api.themoviedb.org/3/search/${type}?query=${query}&include_adult=false&language=en-US`}
+      link={`/api/tmdb/search?${apiParams}`}
       query={query}
       type={type}
     />

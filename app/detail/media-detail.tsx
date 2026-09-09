@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation";
 import axios from "axios";
 
 import { FilmType } from "@/types";
-import { getTmdbAuthConfig } from "@/lib/tmdb-auth";
 import LoadingScreen from "@/components/LoadingScreen";
 import DetailHeader from "./components/DetailHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,15 +20,12 @@ const MediaDetail: FC<MediaDetailProps> = ({}) => {
   const type = params.get("type") as string;
   const id = params.get("id") as string;
 
-  const URL = `https://api.themoviedb.org/3/${type}/${id}`;
-
   const getMediaDetail = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        URL,
-        getTmdbAuthConfig(process.env.NEXT_PUBLIC_API_KEY)
-      );
+      const response = await axios.get("/api/tmdb/detail", {
+        params: { type, id },
+      });
       setIsLoading(false);
 
       setMediaDetail(response.data);

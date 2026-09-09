@@ -207,7 +207,7 @@ export async function POST(req: Request) {
   }
 
   const groqApiKey = process.env.GROQ_API_KEY;
-  const tmdbApiKey = process.env.TMDB_API_KEY ?? process.env.NEXT_PUBLIC_API_KEY;
+  const tmdbApiKey = process.env.TMDB_API_KEY;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const missingKeys = [
     !groqApiKey && "GROQ_API_KEY",

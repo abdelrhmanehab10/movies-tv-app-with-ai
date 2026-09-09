@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { AxiosRequestConfig } from "axios";
 
 export function getTmdbAuthConfig(credential?: string): AxiosRequestConfig {
