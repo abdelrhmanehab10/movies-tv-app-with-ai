@@ -9,3 +9,7 @@
 ### High priority
 
 - [x] Protect the TMDB credential. Move browse, search, and detail requests behind server API routes and use a server-only `TMDB_API_KEY`; do not expose the credential through a public environment variable.
+
+### Medium priority
+
+- [x] Fix search pagination URL construction. The search URL already contains query parameters, but pagination appends a second `?`, producing URLs such as `language=en-US?page=2`. Use `URL`/`URLSearchParams` instead. See `app/(main)/search/search-results.tsx:13` and `components/display-results.tsx:26`.

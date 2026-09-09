@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { createPaginatedUrl } from "@/lib/pagination";
 import { FilmType } from "@/types";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
@@ -21,9 +22,8 @@ const DisplayResults: FC<DisplayResultsProps> = ({ link, query, type }) => {
 
   const getMedia = async () => {
     setIsLoading(true);
-    const { data } = await axios.get(link, {
-      params: { page: searchPage },
-    });
+    const url = createPaginatedUrl(link, searchPage, window.location.origin);
+    const { data } = await axios.get(url);
     setTotalPages(data.total_pages);
     setIsLoading(false);
     setResults(data.results);

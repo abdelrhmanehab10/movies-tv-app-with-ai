@@ -23,8 +23,15 @@ const MediaPagination: React.FC<MediaPaginationProps> = ({
   onClick,
   totalPages,
 }) => {
-  const generateURL = (page: number) =>
-    `/search?q=${query}&t=${type}&p=${page}`;
+  const generateURL = (page: number) => {
+    const params = new URLSearchParams();
+
+    if (query) params.set("q", query);
+    if (type) params.set("t", type);
+    params.set("p", String(page));
+
+    return `/search?${params.toString()}`;
+  };
 
   return (
     <Pagination>
