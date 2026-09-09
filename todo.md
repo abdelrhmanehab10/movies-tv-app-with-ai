@@ -13,3 +13,4 @@
 ### Medium priority
 
 - [x] Fix search pagination URL construction. The search URL already contains query parameters, but pagination appends a second `?`, producing URLs such as `language=en-US?page=2`. Use `URL`/`URLSearchParams` instead. See `app/(main)/search/search-results.tsx:13` and `components/display-results.tsx:26`.
+- [x] Decide the watchlist scope: keep watchlists out of the product promise until implemented; remove watchlist language from the login copy and README.

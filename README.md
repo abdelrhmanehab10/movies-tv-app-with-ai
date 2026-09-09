@@ -28,6 +28,7 @@ Cinemotion is a Next.js application for discovering movies and TV series through
 - **TMDB integration:** server routes handle movie lists, search, details, and AI recommendation lookups without exposing the credential to the browser.
 - **Validation:** Zod schemas are connected to React Hook Form through `@hookform/resolvers`.
 - **UI state:** Zustand manages client-side modal and result state.
+- **Auth and database:** Supabase SSR clients manage cookie sessions; Postgres stores profiles and recommendation history with Row Level Security.
 
 ## Tech stack
 
