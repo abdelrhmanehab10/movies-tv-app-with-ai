@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -5,9 +7,11 @@ interface Props {
 }
 
 const Logo: React.FC<Props> = ({ className }) => (
-  <img
+  <Image
     src="/logo.png"
     alt="Cinematon logo"
+    width={189}
+    height={189}
     className={cn("h-14 mr-2", className)}
   />
 );
