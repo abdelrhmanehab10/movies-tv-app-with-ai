@@ -15,7 +15,7 @@
 - [x] Fix search pagination URL construction. The search URL already contains query parameters, but pagination appends a second `?`, producing URLs such as `language=en-US?page=2`. Use `URL`/`URLSearchParams` instead. See `app/(main)/search/search-results.tsx:13` and `components/display-results.tsx:26`.
 - [x] Decide the watchlist scope: keep watchlists out of the product promise until implemented; remove watchlist language from the login copy and README.
 - [x] Fix the lint tooling mismatch. Migrate the repository to ESLint 9 flat config so `pnpm exec eslint .` and `pnpm lint` pass.
-- [ ] Add an authenticated Postgres concurrency integration test for `claim_free_recommendation()`. Current coverage exercises the quota algorithm with an in-memory implementation; local database validation is blocked until Supabase/Postgres is available.
+- [x] Add an authenticated Postgres concurrency integration test for `claim_free_recommendation()`.
 
 ### Low priority
 
