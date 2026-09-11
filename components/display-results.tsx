@@ -18,15 +18,23 @@ const DisplayResults: FC<DisplayResultsProps> = ({ link, query, type }) => {
   const [searchPage, setSearchPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   const getMedia = async () => {
     setIsLoading(true);
-    const url = createPaginatedUrl(link, searchPage, window.location.origin);
-    const { data } = await axios.get(url);
-    setTotalPages(data.total_pages);
-    setIsLoading(false);
-    setResults(data.results);
+
+    try {
+      const url = createPaginatedUrl(link, searchPage, window.location.origin);
+      const { data } = await axios.get(url);
+      setTotalPages(data.total_pages);
+      setResults(data.results);
+      setError(null);
+    } catch {
+      setError("We couldn't load the results. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -50,7 +58,18 @@ const DisplayResults: FC<DisplayResultsProps> = ({ link, query, type }) => {
           results.length > 0 && "h-full block"
         )}
       >
-        {results.length > 0 ? (
+        {error ? (
+          <div role="alert" className="flex flex-col items-center gap-3 text-center">
+            <p>{error}</p>
+            <button
+              type="button"
+              onClick={getMedia}
+              className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
+            >
+              Retry
+            </button>
+          </div>
+        ) : results.length > 0 ? (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 py-2">
               {results.map((result) => (
