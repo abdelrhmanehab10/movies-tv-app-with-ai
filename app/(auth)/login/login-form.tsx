@@ -13,13 +13,19 @@ type AuthMode = "sign-in" | "sign-up";
 
 const supabase = createClient();
 
-export default function LoginForm() {
+type LoginFormProps = {
+  initialErrorMessage?: string | null;
+};
+
+export default function LoginForm({ initialErrorMessage }: LoginFormProps) {
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>("sign-in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(
+    initialErrorMessage ?? null
+  );
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
