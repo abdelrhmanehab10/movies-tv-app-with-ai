@@ -1,74 +1,102 @@
 # Cinemotion — AI Movie & Series Discovery
 
-Cinemotion is a Next.js application for discovering movies and TV series through search, browsing, pagination, detail pages, and an AI-assisted recommendation flow.
+Cinemotion is a full-stack movie and TV discovery app that combines fast browsing with personalized AI recommendations. Users can search and explore public content, then sign in to receive up to three free recommendations and save their recommendation history.
 
-**Live demo:** [movies-tv-app-with-ai.vercel.app](https://movies-tv-app-with-ai.vercel.app)
+**[Live demo](https://movies-tv-app-with-ai.vercel.app)** · **[View the source](https://github.com/abdelrhmanehab10/movies-tv-app-with-ai)**
 
-## What it demonstrates
+## Why this project
 
-- **AI-assisted discovery:** users choose a mood, story type, and setting; the app sends those preferences to a Groq-powered route and resolves the recommendation through TMDB.
-- **Movie and TV search:** search by media type with URL-based query state and paginated results.
-- **Media details:** open a dedicated detail view with title, genres, overview, release information, and artwork.
-- **Reusable UI:** responsive Tailwind CSS layouts with Radix/shadcn-style components, loading states, dialogs, tabs, forms, and pagination.
-- **Typed form handling:** React Hook Form and Zod validation for search and recommendation inputs.
-- **Client state:** Zustand stores for UI and result state, with debounced search interactions.
-- **Public browsing with account-based picks:** Supabase Auth keeps browsing public while protecting each account's three free AI recommendations.
-- **Personal persistence:** signed-in users get a protected profile and recommendation history in Supabase Postgres.
+Cinemotion was built as a product-focused portfolio project, not just an API demo. It covers the parts of a real application that are easy to overlook:
 
-## User flow
+- Public browsing with search, pagination, media details, and shareable URL state
+- A guided recommendation flow using mood, story type, and setting
+- Authentication, protected history, and row-level database security
+- An atomic per-user quota for three free AI recommendations
+- Server-side provider credentials and clear failure handling
+- Responsive UI states for loading, empty results, provider errors, and retry
 
-1. Browse movie or TV content from the main page.
-2. Search for a title and move through paginated results.
-3. Open a result to view its details.
-4. Open the recommendation flow and sign in when you are ready to submit.
-5. Choose a mood, story type, and setting, then receive one of three free AI picks.
-6. Save successful recommendation history for the account.
+## Product flow
+
+1. Browse popular, top-rated, currently playing, or upcoming movies.
+2. Search movies or TV series and move through paginated results.
+3. Open a title to view its details, genres, overview, release information, and artwork.
+4. Sign in when ready to use the recommendation flow.
+5. Choose a quick vibe or tune the mood, story type, and setting manually.
+6. Receive an AI-generated pick resolved against TMDB, then save successful recommendation history.
 
 ## Architecture
 
-- **Next.js App Router:** route groups separate the main browsing experience from detail pages.
-- **Recommendation API:** `app/api/recommend/route.ts` calls Groq through the OpenAI-compatible SDK and then searches TMDB for the returned title.
-- **TMDB integration:** server routes handle movie lists, search, details, and AI recommendation lookups without exposing the credential to the browser.
-- **Validation:** Zod schemas are connected to React Hook Form through `@hookform/resolvers`.
-- **UI state:** Zustand manages client-side modal and result state.
-- **Auth and database:** Supabase SSR clients manage cookie sessions; Postgres stores profiles and recommendation history with Row Level Security.
+```mermaid
+flowchart LR
+  Browser[Browser] --> App[Next.js App Router]
+  App --> BrowseAPI[TMDB server routes]
+  BrowseAPI --> TMDB[TMDB]
+  App --> RecommendAPI[Recommendation route]
+  RecommendAPI --> Groq[Groq]
+  RecommendAPI --> TMDB
+  App --> Auth[Supabase Auth]
+  RecommendAPI --> DB[Supabase Postgres]
+```
+
+### Engineering decisions
+
+| Concern | Approach | Why it matters |
+| --- | --- | --- |
+| Provider security | TMDB, Groq, and Supabase service credentials stay in server-only code | Secrets never need to reach the browser |
+| Recommendation quota | An atomic Postgres claim function limits each authenticated user to three free picks | Concurrent requests cannot bypass the limit |
+| Failed provider calls | A successful quota claim is refunded when the recommendation provider fails | Users do not lose a pick because of an upstream outage |
+| Authentication | Supabase SSR clients, cookie refresh middleware, and RLS policies | Sessions and user-owned history work across server and browser boundaries |
+| Input validation | Zod schemas validate form input and TMDB route parameters | Invalid requests fail before reaching external providers |
+| Client resilience | Loading, empty, error, retry, and persisted-result states are handled explicitly | Provider failures do not leave the interface stuck |
+
+## Features
+
+- AI-assisted movie and series recommendations through Groq and TMDB
+- Movie and TV search with URL-based query state and pagination
+- Popular, top-rated, now-playing, and upcoming movie browsing
+- Detail pages with metadata and responsive artwork
+- Quick recommendation presets and advanced preference selection
+- Supabase email authentication and account creation
+- Recommendation history stored in Postgres with row-level security
+- Three free AI recommendations per authenticated user
+- Versioned browser persistence for the latest recommendation
+- Responsive Tailwind CSS interface with explicit loading, empty, and error states
 
 ## Tech stack
 
-- Next.js 15
-- React 18
-- TypeScript
-- Tailwind CSS
-- Radix UI / shadcn-style components
-- Zustand
-- React Hook Form + Zod
-- Axios
-- Groq API
-- TMDB API
-- Supabase Auth + Postgres
+**Frontend:** Next.js 15, React 18, TypeScript, Tailwind CSS, Radix UI, Zustand
 
-## Getting started
+**Forms and validation:** React Hook Form, Zod, `@hookform/resolvers`
+
+**Backend and data:** Next.js route handlers, Axios, Supabase Auth, Supabase Postgres, PostgreSQL functions
+
+**External services:** Groq API and TMDB API
+
+**Quality:** ESLint 9 flat config, Vitest, Supabase CLI, TypeScript
+
+## Run locally
 
 ### Prerequisites
 
-- Node.js 18+
-- npm, pnpm, or another Node.js package manager
+- Node.js 18 or newer
+- pnpm
 - A Groq API key
-- A TMDB API key or read access token
-- A Supabase project (the repository includes the initial migration)
+- A TMDB API key or v4 read access token
+- A Supabase project for authentication and persistence
 
 ### Installation
 
 ```bash
 git clone https://github.com/abdelrhmanehab10/movies-tv-app-with-ai.git
 cd movies-tv-app-with-ai
-npm install
+pnpm install
 ```
 
-Create a `.env.local` file in the project root:
+Create `.env.local` from `.env.example`:
 
 ```env
 GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=openai/gpt-oss-20b
 TMDB_API_KEY=your_tmdb_api_key_or_read_access_token
 NEXT_PUBLIC_IMAGE_URL=https://image.tmdb.org/t/p/w500
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
@@ -76,13 +104,9 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ```
 
-`NEXT_PUBLIC_IMAGE_URL` is optional; the app defaults to the URL above when it is not set.
-`TMDB_API_KEY` is server-only; never give it a `NEXT_PUBLIC_` prefix. Do not
-commit `.env.local` or expose secret values in source control.
+`NEXT_PUBLIC_IMAGE_URL` is optional. `TMDB_API_KEY`, `GROQ_API_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` are server-only values and must never use a `NEXT_PUBLIC_` prefix or be committed.
 
-### Database setup
-
-The repository includes Supabase CLI configuration and versioned migrations. After authenticating and linking the hosted project, apply them with:
+Apply the Supabase migrations to a linked project:
 
 ```bash
 pnpm supabase login
@@ -90,21 +114,27 @@ pnpm supabase link --project-ref your-project-ref
 pnpm supabase db push
 ```
 
-The migrations create the account tables and an atomic three-pick recommendation quota. Browsing stays public, but AI recommendations require a signed-in user. Quota claims use that user's Supabase identity, while provider-failure refunds use the server-only `SUPABASE_SERVICE_ROLE_KEY`; never give that key a `NEXT_PUBLIC_` prefix.
-
-### Run locally
+Start the development server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Production build
+## Quality checks
 
 ```bash
-npm run build
-npm run start
+pnpm lint
+pnpm test
+pnpm build
+```
+
+The database concurrency suite requires Docker and a running local Supabase stack:
+
+```bash
+pnpm supabase start
+pnpm test:db
 ```
 
 ## Project structure
@@ -112,7 +142,7 @@ npm run start
 ```text
 app/
 ├── (auth)/                 # Sign-in and account creation
-├── (main)/                 # Browse, search, recommendation UI
+├── (main)/                 # Browse, search, and recommendation UI
 ├── api/recommend/          # Groq + TMDB recommendation route
 ├── api/tmdb/               # Server-only TMDB browse routes
 ├── auth/callback/          # Supabase auth callback
@@ -120,18 +150,7 @@ app/
 components/                 # Reusable UI and result components
 hooks/                      # Zustand stores and shared hooks
 lib/supabase/               # Browser, server, and middleware clients
-supabase/migrations/        # Versioned Postgres schema and RLS policies
+supabase/migrations/        # Versioned schema and RLS policies
 schemas/                    # Zod validation schemas
 types/                      # Shared TypeScript types
 ```
-
-## Engineering highlights
-
-- Keeps Groq, TMDB, and Supabase service credentials on the server.
-- Uses URL query parameters to make search state shareable and navigable.
-- Separates API calls, validation schemas, shared components, and page-level UI.
-- Includes dependency and security-maintenance updates in the project history.
-
-## License
-
-This project is licensed under the MIT License.
